@@ -112,6 +112,15 @@ var LANGUAGE = {
     'mpy-warning' : 'This version of the Python Editor doesn\'t currently support adding .mpy files.',
     'extension-warning' : 'The Python Editor can only load files with the .hex or .py extensions.'
   },
+  'model': {
+    'file-title': 'Filename',
+    'default-filename': 'MyModel.model',
+    'record-title': 'Record',
+    'instructions': 'Click the record button to start recording, clap your pattern, and click the stop recording button. Repeat until you have 5-10 recordings, then click the Compile Model button.',
+    'compile': 'Compile Model',
+    'save-title': 'Save',
+    'save-model': 'Download model file'
+  },
   'languages': {
     'en': {
       'title': 'English'
@@ -158,6 +167,10 @@ var LANGUAGE = {
         'label': 'Open Serial',
         'title-close': 'Close the serial connection and go back to the editor',
         'label-close': 'Close Serial'
+      },
+      'command-model': {
+        'title': 'Train a machine learning (ML) model',
+        'label': 'Make model',
       },
       'command-connect': {
         'title': 'Connect to the micro:bit',

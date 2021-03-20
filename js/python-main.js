@@ -331,6 +331,20 @@ function web_editor(config) {
 
     var usePartialFlashing = true;
 
+    // Used to indicate to the media recorder when to stop
+    var stopped = false;
+    var shouldStop = false;
+    var recordedChunks = [];
+
+    // Array storing the audio recordings
+    var recordings = [];
+    // Array storing the indices of deleted audio recordings
+    var ignore = [];
+
+    // Binary data of the audio recordings
+    var recordingsBin = [];
+
+
     // Sets the name associated with the code displayed in the UI.
     function setName(x) {
         $("#script-name").val(x);
@@ -1412,6 +1426,175 @@ function web_editor(config) {
             .catch(webusbErrorHandler);
     }
 
+    // Describes what to do when the model button is clicked.
+    function doModel() {
+        var template = $('#model-template').html();
+        Mustache.parse(template);
+        // Load constant strings from en.js
+        var loadStrings = config.translate.model;
+        vex.open({
+            content: Mustache.render(template, loadStrings),
+            afterOpen: function(vexContent) {
+                focusModal("#model-modal");
+                $("#model-name").val(config.translate.model['default-filename']);
+                $('#compile').prop('disabled', true);
+                $('#stop-button').hide();
+                $('#delete').hide();
+                // $('#show-files').attr('title', loadStrings['show-files'] +' (' + FS.ls().length + ')');
+                // document.getElementById('show-files').innerHTML = loadStrings['show-files'] + ' (' + FS.ls().length + ') <i class="fa fa-caret-down">';
+                $('#save-model').on('click', doDownload); // TODO: update with relevant download function
+                // $('#save-py').click(function() {
+                //     if (FS.ls().length > 1) {
+                //         if (!confirm(config.translate.confirms.download_py_multiple.replace('{{file_name}}', getSafeName() + '.py'))) {
+                //             return;
+                //         }
+                //     }
+                //     downloadFileFromFilesystem('main.py');
+                // });
+                // $("#expandHelpPara").click(function(){
+                //     if ($("#fileHelpPara").css("display")=="none"){
+                //         $("#fileHelpPara").show();
+                //         $("#expandHelpPara").attr("aria-expanded","true");
+                //         $("#addFile").css("margin-bottom","10px");
+                //     }else{
+                //         $("#fileHelpPara").hide();
+                //         $("#expandHelpPara").attr("aria-expanded","false");
+                //         $("#addFile").css("margin-bottom","22px");
+                //     }
+                // });
+                
+                var updateCompileVisibility = function () {
+                    $('#compile').prop('disabled', $("#recordings").prop('childElementCount') < 5);
+                };
+
+                var handleSuccess = function(stream) {
+                    var options = { mimeType: 'audio/webm' };
+                    recordedChunks = [];
+                    var mediaRecorder = new MediaRecorder(stream, options);
+                    var time = 3; // Limit recordings to 3 seconds
+                
+                    mediaRecorder.addEventListener("dataavailable", function(e) {
+                        console.log("Data available")
+                        time -= 1;
+
+                        if (!stopped && e.data.size > 0) {
+                            recordedChunks.push(e.data);
+                        // console.log(e.data);
+                        }
+                
+                        if(time == 0 || (shouldStop === true && stopped === false)) {
+                            $('#stop-button').hide();
+                            $('#record-button').show();
+                            mediaRecorder.stop();
+                            recordings.push(recordedChunks);
+                            // console.log(recordings);
+                            stopped = true;
+                            shouldStop = false;
+                        }
+                    });
+
+                    mediaRecorder.addEventListener('stop', function() {
+                        var blob = new Blob(recordedChunks, {
+                            type: 'audio/webm'
+                        });
+                        var url = URL.createObjectURL(blob);
+                        $('#array').attr("href", url);
+                        $('#array').attr("download", "test.webm");
+
+                        var num = $("#recordings").prop('childElementCount')+1;
+                        var clipContainerElement = document.createElement('article');
+                        var audioElement = document.createElement('audio');
+                        var $del = $('#delete').clone().show().attr("id", "delete"+num);
+                        $del.attr("class", "action roundsymbolborderless fa fa-trash");
+                        $del.click(function () {
+                            $('#audio'+num).remove();
+                            $('#container'+num).remove();
+                            $del.remove();
+                            ignore.push(num-1);
+                            updateCompileVisibility();
+                        });
+
+                        clipContainerElement.appendChild(audioElement);
+                        $del.appendTo(clipContainerElement);
+                        $('#recordings').append(clipContainerElement);
+                        
+                        audioElement.controls = true;
+                        audioElement.src = url;
+                        audioElement.id = "audio"+num;
+                        clipContainerElement.id ="container"+num;
+                        recordedChunks = [];
+
+                        updateCompileVisibility();
+                        audioToBinary(audioElement);
+                    });          
+                    
+                    var audioToBinary = function(audio){
+                        var ctx = new AudioContext()
+                        // 2048 sample buffer, 1 channel in, 1 channel out  
+                        , processor = ctx.createScriptProcessor(2048, 1, 1)
+                        , source
+                        , binResults = []
+                        , unfinished = true
+                        
+                        audio.crossOrigin = 'anonymous'
+                    
+                        audio.addEventListener('canplaythrough', function(){
+                        source = ctx.createMediaElementSource(audio)
+                        source.connect(processor)
+                        source.connect(ctx.destination)
+                        processor.connect(ctx.destination)
+                        audio.play()
+                        }, false);
+                        
+                        // loop through PCM data and calculate average
+                        // volume for a given 2048 sample buffer
+                        processor.onaudioprocess = function(evt){
+                            var input = evt.inputBuffer.getChannelData(0)
+                                , len = input.length   
+                                , total = 0
+                                , i = 0
+                                , rms
+                            while ( i < len ) total += Math.abs( input[i++] )
+                            rms = Math.sqrt( total / len )
+                            // TODO: fix bug (this is a temporary fix)
+                            if (binResults.length < 70) {
+                                // console.log("rms: "+rms)
+                                binResults.push(rms > 0.1 ? 1 : 0)
+                            } else if (unfinished) {
+                                unfinished = false
+                                recordingsBin.push(binResults)
+                                console.log(recordingsBin)
+                            }
+                        }
+                        
+                    };
+                
+                    // Start mediaRecorder & request data every second
+                    mediaRecorder.start(1000);
+                    };
+                            
+                // Change button to recording
+                $('#record-button').click(function() {
+                    $('#record-button').hide();
+                    $('#stop-button').show();
+                    // Start recording
+                    stopped = false
+                    navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+                    .then(handleSuccess);
+                });
+
+                // Change button to not recording
+                $('#stop-button').click(function() {
+                    $('#stop-button').hide();
+                    $('#record-button').show();
+                    shouldStop = true; // Cause mediaRecorder to stop on next dataavailable event
+                });
+            }
+        });
+        updateFileTables(loadStrings);
+    }
+    
+
     function setupHterm() {
         if (REPL == null) {
             hterm.defaultStorage = new lib.Storage.Memory();
@@ -1515,6 +1698,7 @@ function web_editor(config) {
         }
         $('#command-download').on('click', doDownload);
         $('#command-flash').on('click', doFlash);
+        $('#command-model').on('click', doModel);
         $("#command-files").click(function () {
             doFiles();
         });

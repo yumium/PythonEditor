@@ -134,6 +134,40 @@ Nicholas and Damien.
             </div>
           </div>
         </script>
+        <script id="model-template" type="x-tmpl-mustache">
+            <div id="model-modal" tabindex="-1" role="dialog" aria-label="create ML model" aria-modal="true" class="modal-div">
+                <h2 class="modal-title"><i class="fa fa-play"></i> <strong>{{ record-title }}</strong></h2>
+                <p>{{ instructions }}</p>
+                <div class="row">
+                <div class="column left">
+                    <button type="button" class="action roundsymbol record-button" id="record-button">
+                    <svg class="svg svg-icon-start-recording" viewBox="-2 0 29 29" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-label="serial">
+                        <path d="M16 11c0 2.209-1.791 4-4 4s-4-1.791-4-4v-7c0-2.209 1.791-4 4-4s4 1.791 4 4v7zm4-2v2c0 4.418-3.582 8-8 8s-8-3.582-8-8v-2h2v2c0 3.309 2.691 6 6 6s6-2.691 6-6v-2h2zm-7 13v-2h-2v2h-4v2h10v-2h-4z" id="rect12318"inkscape:connector-curvature="0" style="fill:currentColor" sodipodi:nodetypes="cccccccccccssssssssssccsssscsssssss" />
+                    </svg>
+                    </button>
+                    <button type="button" class="action roundsymbol stop-button" id="stop-button">
+                    <svg class="svg svg-icon-start-recording" viewBox="-2 -1 29 29" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-label="serial">
+                        <path d="M2 2h20v20h-20z" id="rect12318"inkscape:connector-curvature="0" style="fill:currentColor" sodipodi:nodetypes="cccccccccccssssssssssccsssscsssssss" />
+                    </svg>
+                    </button>
+                    <!-- <a id="array">Download</a> To be removed -->
+                </div>
+                <div class="column middle">
+                    <section id="recordings"></section>
+                    <button id="delete" class="fa fa-trash" type="button"></button>
+                </div>
+                <div class="column right save-buttons-container">
+                    <button aria-labelledby="compile" type="button" class="action save-button" id="compile" title="{{ compile }}"><i class="fa fa-bar-chart"></i> {{ compile }}</button>
+                </div>
+                </div>
+
+                <h2 class="modal-title"><i class="fa fa-download"></i> <strong>{{ save-title }}</strong></h2>
+                <div class="vbox action save-buttons-container2">
+                    <input id="model-name" class="flex1">
+                    <button aria-labelledby="save-model" type="button" class="action save-button" id="save-model" title="{{ save-model }}"><i class="fa fa-download"></i> {{ save-model }}</button>
+                </div>
+            </div>
+        </script>
         <script id="snippet-template" type="x-tmpl-mustache">
           <div id="snippet-modal" tabindex="-1" role="dialog" aria-label="snippets modal" aria-modal="true" class="modal-div">
             <h2><i class="fa fa-cogs"></i> <strong>{{ title }}</strong></h2>
@@ -246,6 +280,16 @@ Nicholas and Damien.
                         </svg>
                     </div>
                     <div class="roundlabel">Open Serial</div>
+                </a>
+                <a href="#" class="roundbutton action" id="command-model"
+                    tabindex="40"
+                    title="Train a machine learning (ML) model">
+                    <div class="roundsymbol">
+                        <svg class="svg svg-icon-touchdevelop" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-label="serial">
+                            <path d="M18.586 10.081c-1.439 0-1.35 2.802-2.029 4.071-.114.211-.425.184-.5-.044-.771-2.364-.419-8.108-2.51-8.108-2.189 0-1.648 7.433-2.5 10.462-.063.23-.381.25-.474.028-.9-2.161-.799-6.875-2.502-6.875-1.762 0-1.612 3.949-2.302 5.54-.091.213-.392.22-.493.01-.503-1.049-.664-3.165-2.564-3.165h-2.213c-.275 0-.499.224-.499.499s.224.501.499.501h2.213c1.572 0 1.038 3.484 2.854 3.484 1.684 0 1.502-3.79 2.223-5.47.088-.208.382-.202.466.006.805 2.047.79 6.98 2.641 6.98 2.077 0 1.337-7.856 2.443-10.621.083-.211.384-.222.479-.012 1.029 2.25.487 8.126 2.344 8.126 1.639 0 1.737-2.706 2.23-4.038.081-.212.373-.227.474-.027.516 1.001.846 2.572 2.4 2.572h2.235c.275 0 .499-.224.499-.499 0-.276-.224-.5-.499-.5h-2.235c-1.323 0-1.117-2.92-2.68-2.92z" id="rect12318"inkscape:connector-curvature="0" style="fill:currentColor" sodipodi:nodetypes="cccccccccccssssssssssccsssscsssssss" />
+                        </svg>
+                    </div>
+                    <div class="roundlabel">Make Model</div>
                 </a>
                 <a href="#" class="roundbutton action hidden" id="command-blockly"
                     tabindex="50"

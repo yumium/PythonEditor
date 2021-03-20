@@ -299,6 +299,18 @@ html[data-useragent*='MSIE 10.0'] .small-icons .status-icon {
   background: #FFFFFF;
 }
 
+.roundsymbolborderless {
+  vertical-align: top;
+  border: none;
+  margin: 1rem;
+  text-align: center;
+  font-size: 2.6rem;
+  line-height: 4.4rem;
+  font-family: "Segoe UI Emoji", "Segoe UI Symbol", "Symbola", sans-serif;
+  color: #336699;
+  background: #FFFFFF;
+}
+
 .winroundsymbol {
   line-height: 3.7rem;
 }
@@ -877,6 +889,13 @@ input:checked + .menu-switch-slider:before {
     width: 100%;
     text-align: center;
 }
+
+.save-buttons-container2 {
+    display: inline-block;
+    width: 100%;
+    text-align: left;
+}
+
 .save-button.hex,
 .save-button.py {
     padding: 10px 20px;
@@ -1025,6 +1044,47 @@ input:checked + .menu-switch-slider:before {
 #fs-space-free {
     width: auto;
     min-width: 2%;
+}
+
+/* ML model */
+/* Create three unequal columns that floats next to each other */
+.column {
+  float: left;
+  padding: 10px;
+  height: 300px; /* Should be removed. Only for demonstration */
+  overflow-y: scroll;  /* So that recordings do not overflow */
+}
+
+.left {
+  width: 15%;
+}
+
+.right {
+  width: 30%;
+}
+
+.middle {
+  width: 55%;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+#model-name {
+  border: #808080 1px solid;
+  color: #1a354c;
+  overflow: hidden;
+  width: 40%;
+  margin-right: 1rem;
+  background-color: white;
+  line-height: 2.5rem;
+  max-height: 2.5rem;
+  padding: 0 0.5rem;
+  border-radius: 0.5rem;
 }
 
 /* Language selection drop down menu */
