@@ -174,7 +174,7 @@ var LANGUAGE = {
       },
       'command-model': {
         'title': 'Train a machine learning (ML) model',
-        'label': 'Make model',
+        'label': 'Make Model',
       },
       'command-connect': {
         'title': 'Connect to the micro:bit',
