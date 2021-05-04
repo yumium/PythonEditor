@@ -119,7 +119,11 @@ var LANGUAGE = {
     'instructions': 'Click the record button to start recording, clap your pattern, and click the stop recording button. Repeat until you have 5-10 recordings, then click the Compile Model button.',
     'compile': 'Compile Model',
     'save-title': 'Save',
-    'save-model': 'Download model file'
+    'save-model': 'Download model file',
+	'isTraining': "Training..."
+  },
+  'training': {
+	'training-title': 'Training',
   },
   'languages': {
     'en': {

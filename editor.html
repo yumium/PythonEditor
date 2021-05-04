@@ -63,6 +63,7 @@ Nicholas and Damien.
         <link rel="stylesheet" type="text/css" href="static/css/vex-theme-wireframe.css" />
         <link rel="stylesheet" type="text/css" href="static/css/font-awesome.min.css">
         <link rel="icon" href="static/img/favicon.ico">
+		<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
     </head>
     <body>
         <script type="application/javascript">
@@ -158,7 +159,11 @@ Nicholas and Damien.
                 </div>
                 <div class="column right save-buttons-container">
                     <button aria-labelledby="compile" type="button" class="action save-button" id="compile" title="{{ compile }}"><i class="fa fa-bar-chart"></i> {{ compile }}</button>
-                </div>
+					<p id="isTraining">{{ isTraining }}</p>
+					<div id="myProgress" style="width: 100%; background-color: grey">
+						<div id="myBar"></div>
+					  </div>
+				</div>
                 </div>
 
                 <h2 class="modal-title"><i class="fa fa-download"></i> <strong>{{ save-title }}</strong></h2>
